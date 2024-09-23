@@ -11,6 +11,8 @@ enum dir {
 
 enum token {
 	NOP = ' ',
+	PUSH = 'p',
+	ENDPUSH = 'P',
 	ADD = '+',
 	SUB = '-',
 	WRT = 'w',
@@ -78,12 +80,35 @@ int main(int argc, char **argv){
 		int lhs = 0;
 		int rhs = 0;
 		char c = 0;
+		char *num = calloc(0, 12);
+		int i = 0;
 		switch (t){
 			case NOP: break;
 			case FLOWUP: readdir = UP; break;
 			case FLOWDOWN: readdir = DOWN; break;
 			case FLOWLEFT: readdir = LEFT; break;
 			case FLOWRIGHT: readdir = RIGHT; break;
+			case PUSH:
+				switch (readdir) {
+					case RIGHT: col++; break;
+					case LEFT: col--; break;
+					case UP: row--; break;
+					case DOWN: row++; break;
+				}
+				while ((c = file[row][col]) != ENDPUSH){
+					num[i] = c;
+					i++;
+					switch (readdir) {
+						case RIGHT: col++; break;
+						case LEFT: col--; break;
+						case UP: row--; break;
+						case DOWN: row++; break;
+					}
+				}
+				num[i] = '\0';
+				c = strtol(num, NULL, 0); 
+				push(c);
+				break;	
 			case WRT: 
 				c = pop();
 				putchar(c); 
