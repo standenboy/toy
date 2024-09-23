@@ -26,6 +26,20 @@ enum token {
 	CPY = 'c',
 };
 
+int *sp;
+
+void push(int data){
+	*sp = data; 
+	sp += sizeof(int); 
+}
+
+int pop(){
+	sp -= sizeof(int);
+	int data = *sp;
+	*sp = 0;
+	return data;
+}
+
 int main(int argc, char **argv){
 	if (argc < 2) return 1;
 	
@@ -57,7 +71,7 @@ int main(int argc, char **argv){
 	enum token t = NOP;
 
 	int *stack = calloc(0, sizeof(int) * 1024);
-	int *sp = stack;
+	sp = stack;
 	
 	while (t != END){
 		t = file[row][col];
@@ -71,56 +85,40 @@ int main(int argc, char **argv){
 			case FLOWLEFT: readdir = LEFT; break;
 			case FLOWRIGHT: readdir = RIGHT; break;
 			case WRT: 
-				sp -= sizeof(int);
-				c = *sp;
-				*sp = 0;
+				c = pop();
 				putchar(c); 
 				break;
 			case READ: 
-				*sp = getchar(); 
-				sp += sizeof(int); 
+				push(getchar());
 				while (getchar() != '\n'); 
 				break;
 			case ADD: 
-				sp -= sizeof(int);
-				lhs = *sp;
-				*sp = 0;
-				sp -= sizeof(int);
-				rhs = *sp;
-				*sp = 0;
-				*sp = lhs + rhs;
-				sp += sizeof(int);
+				lhs = pop();
+				rhs = pop();
+				push(lhs+rhs);
 				break;
 			case SUB: 
-				sp -= sizeof(int);
-				lhs = *sp;
-				*sp = 0;
-				sp -= sizeof(int);
-				rhs = *sp;
-				*sp = 0;
-				*sp = lhs - rhs;
-				sp += sizeof(int);
+				lhs = pop();
+				rhs = pop();
+				push(lhs-rhs);
 				break;
 			case ISZERO:
-				sp -= sizeof(int);
-				c = *sp;
+				c = pop();
 				if (c == 0) readdir = UP;
 				else readdir = DOWN;
-				*sp = 0;
 				break;
 			case INC: 
-				sp -= sizeof(int);
-				c = *sp;
-				*sp = 0;
-				*sp = c + 1;
-				sp += sizeof(int);
+				c = pop();
+				push(c+1);
 				break;
 			case DEC: 
-				sp -= sizeof(int);
-				c = *sp;
-				*sp = 0;
-				*sp = c - 1;
-				sp += sizeof(int);
+				c = pop();
+				push(c-1);
+				break;
+			case CPY:
+				c = pop();
+				push(c);
+				push(c);
 				break;
 			case END:
 				continue;	
