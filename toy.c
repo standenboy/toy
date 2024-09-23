@@ -11,7 +11,9 @@ enum dir {
 
 enum token {
 	NOP = ' ',
+	SWAP = 's',
 	PUSH = 'p',
+	DEL = 'D',
 	ENDPUSH = 'P',
 	ADD = '+',
 	SUB = '-',
@@ -74,6 +76,7 @@ int main(int argc, char **argv){
 
 	int *stack = calloc(0, sizeof(int) * 1024);
 	sp = stack;
+	int reg = 0;
 	
 	while (t != END){
 		t = file[row][col];
@@ -109,6 +112,14 @@ int main(int argc, char **argv){
 				c = strtol(num, NULL, 0); 
 				push(c);
 				break;	
+			case SWAP:
+				c = pop();
+				push(reg);
+				reg = c;
+				break;
+			case DEL:
+				pop();
+				break;
 			case WRT: 
 				c = pop();
 				putchar(c); 
